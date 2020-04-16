@@ -42,6 +42,11 @@ image (scale, shear, rotations etc.).
  although their registration options are less mature, and some still a work 
  in progress. 
  
+* Alternatively, [pyelastix](https://github.com/almarklein/pyelastix) 
+seems to work well (see code snippet below). This would rely on providing 
+precompiled elastix binaries, but this is planned for amap and cellfinder 
+anyway, so it's no extra work.
+ 
 * Loop through each 2D image. (multiprocessing?)
 
 
@@ -94,5 +99,45 @@ the spatial distribution of detected features)? `cellfinder` will have a
  this, but nothing much has been done yet.
  
 
+## Code snippits
 
+##### Registration using pyelastix
+```python
+import pyelastix
+import numpy as np
+
+def register_image(slice_image, reference_image):
+    im1_affine_transformed = affine_transform(reference_image, slice_image)
+    im1_deformed, field = bspline_transformation(
+        im1_affine_transformed, reference_image
+    )
+    return (
+        slice_image,
+        reference_image,
+        im1_deformed,
+        im1_affine_transformed,
+        field,
+    )
+def bspline_transformation(image_to_transform, reference_image):
+    params = pyelastix.get_default_params(type="BSPLINE")
+    params.MaximumNumberOfIterations = 500
+    im1_deformed, field = pyelastix.register(
+        image_to_transform.astype(np.float32),
+        (reference_image > 0).astype(np.float32),
+        params,
+        verbose=0,
+    )
+    return im1_deformed, field
+def affine_transform(reference_image, slice_image):
+    params = pyelastix.get_default_params(type="AFFINE")
+    params.MaximumNumberOfIterations = 200
+    params.FinalGridSpacingInVoxels = 10
+    im1_deformed, field = pyelastix.register(
+        slice_image.astype(np.float32),
+        (reference_image > 0).astype(np.float32),
+        params,
+        verbose=0,
+    )
+    return im1_deformed
+```
 
