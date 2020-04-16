@@ -99,12 +99,13 @@ the spatial distribution of detected features)? `cellfinder` will have a
  this, but nothing much has been done yet.
  
 
-## Code snippits
+## Code snippets
 
 ##### Registration using pyelastix
 ```python
 import pyelastix
 import numpy as np
+
 
 def register_image(slice_image, reference_image):
     im1_affine_transformed = affine_transform(reference_image, slice_image)
@@ -118,6 +119,8 @@ def register_image(slice_image, reference_image):
         im1_affine_transformed,
         field,
     )
+
+
 def bspline_transformation(image_to_transform, reference_image):
     params = pyelastix.get_default_params(type="BSPLINE")
     params.MaximumNumberOfIterations = 500
@@ -128,6 +131,8 @@ def bspline_transformation(image_to_transform, reference_image):
         verbose=0,
     )
     return im1_deformed, field
+
+
 def affine_transform(reference_image, slice_image):
     params = pyelastix.get_default_params(type="AFFINE")
     params.MaximumNumberOfIterations = 200
