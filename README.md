@@ -1,3 +1,5 @@
+## Development of this tool has now been moved to [BrainGlobe/slicereg](https://github.com/brainglobe/slicereg)
+
 # slicereg
 Registration of 2D sections to a 3D volume
 
